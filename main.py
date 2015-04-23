@@ -39,7 +39,7 @@ def mygen(lettres, n):
             else:
                 g.reset()
 def crypte(str, methode):
-    m =  hashlib.md5()
+    m =  hashlib.new(methode)
     m.update(str.encode('utf-8'))
     return m.hexdigest()
 methodes = hashlib.algorithms_guaranteed
