@@ -38,15 +38,11 @@ def mygen(lettres, n):
                 break
             else:
                 g.reset()
-def md5(str):
+def crypte(str, methode):
     m =  hashlib.md5()
     m.update(str.encode('utf-8'))
     return m.hexdigest()
-methodes = {
-    "md5" : md5,
-    "sha1" : md5,
-    "sha512" : md5
-}
+methodes = hashlib.algorithms_guaranteed
 
 def main():
     import argparse
@@ -57,7 +53,7 @@ def main():
     parser.add_argument("-A", help="include A-Z", action="store_true")
     parser.add_argument("-n", help="include 0-9", action="store_true")
     parser.add_argument("-s", help="Specials chars")
-    parser.add_argument("-m", help="methode", choices=methodes.keys())
+    parser.add_argument("-m", help="methode", choices=methodes)
     parser.add_argument("-o","--out" ,  help="file output, if not set, print int console")
     args = parser.parse_args()
     if (args.min > args.max):
@@ -87,13 +83,11 @@ def main():
         return
     print("generating %s [%d, %d] with %s" % (args.m, args.min, args.max, lettres))
 
-    crypt = None
-    if args.m:
-        crypt = methodes[args.m]
+
     for i in range(args.min,args.max + 1):
         for mot in mygen(lettres, i):
-            if crypt:
-                out.write("%s = %s\n" % (mot, crypt(mot)))
+            if args.m:
+                out.write("%s = %s\n" % (mot, crypte(mot, args.m)))
             else:
                 out.write("%s\n" % mot)
 
