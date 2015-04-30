@@ -3,11 +3,12 @@
 
 import socketserver
 import ChallengeServer
+import Global
 
 class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer): pass
 
 class TCPHandler(socketserver.BaseRequestHandler):
-    END_LINE ="\r\n"
+    END_LINE = Global.END_LINE
     def send(self, msg):
         response = (msg + self.END_LINE).encode(encoding="UTF-8")
         self.request.sendall(response)

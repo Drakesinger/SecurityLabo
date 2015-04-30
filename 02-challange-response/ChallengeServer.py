@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import re
-
-REGEX_USER = "^[A-Za-z0-9]{4,}$"
-REGEX_CHALLENGE = "^[A-Za-z]{8}$"
+import User
+import Global
 
 class ChallengeServer:
     def __init__(self):
@@ -44,12 +43,12 @@ class StateWaitUser(StateInterface):
     def error(self):
         return "3 user KO"
     def getResponse(self, message):
-        if not re.match(REGEX_USER, message):
+        if not re.match(Global.REGEX_USER, message):
             return self.error()
-        if message == "jules" or True:
+        self.__user = User.User(message)
+        if self.__user.isUserValid():
             self.keepOpen = True
-            self.__user = "jules"
-            return "2 userOK"
+            return "2 " + self.__user.getChallenge()
         else:
             return self.error()
 
@@ -69,9 +68,9 @@ class StateWaitChallenge(StateInterface):
     def error(self):
         return "6 challenge KO"
     def getResponse(self, message):
-        if not re.match(REGEX_CHALLENGE, message):
+        if not re.match(Global.REGEX_CHALLENGE, message):
             return self.error()
-        if message == "1234" or True:
+        if self.__user.isChallengeValid(message):
             self.keepOpen = True
             return "5 challengeOK"
         else:
