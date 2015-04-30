@@ -56,3 +56,5 @@ docs/_build/
 # PyBuilder
 target/
 /.idea
+
+02-challange-response/users/*
