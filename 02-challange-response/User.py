@@ -6,17 +6,14 @@ import time
 import shutil
 import Global
 
-dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),"users")
-
-print("user dir %s" % dir)
-
 class User():
+    dir = os.path.join(os.path.dirname(os.path.realpath(__file__)),"users")
     def __init__(self, user):
         self.__user = user.lower()
         self.__challenge = None
         self.__response = None
         self.__valid = False
-        file = os.path.join(dir, "%s.txt" % user)
+        file = os.path.join(self.dir, "%s.txt" % user)
         fileLock = "%s.lock" % file
         fileTmp = "%s.old" % file
         if os.path.exists(file):
@@ -33,7 +30,6 @@ class User():
                 for i, line in enumerate(fRead):
                     if i == 2:
                         tab = line.split(Global.USER_FILE_DELIMITER)
-                        print(tab)
                         if len(tab) == Global.USER_FILE_FIRST_CHAP_LINE:
                             self.__valid = True
                             self.__challenge = tab[0]

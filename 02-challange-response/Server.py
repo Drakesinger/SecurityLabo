@@ -4,20 +4,24 @@
 import socketserver
 import ChallengeServer
 import Global
+import IPFailCounter
 
-ipFailCounter = None
+
 
 class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer): pass
 
 class TCPHandler(socketserver.BaseRequestHandler):
+    ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
     END_LINE = Global.END_LINE
     def send(self, msg):
         response = (msg + self.END_LINE).encode(encoding="UTF-8")
         self.request.sendall(response)
     def handle(self):
-        print("%s connected" % (self.client_address[0]))
-        if ipFailCounter.isBlocked()
-        challengeServer = ChallengeServer.ChallengeServer()
+        ip = self.client_address[0]
+        print("%s connected" % (ip))
+        if self.ipFailCounter.isBlocked(ip):
+            return
+        challengeServer = ChallengeServer.ChallengeServer(ip, self.ipFailCounter)
         line = ""
         keepOpen = True
         try:
@@ -44,9 +48,6 @@ def main():
     port = 7777
     print("Start server on %s:%d" % (host, port))
     print("Press Ctrl+C to exit server")
-    import IPFailCounter
-    global ipFailCounter
-    ChallengeServer.ipFailCounter = ipFailCounter = IPFailCounter.IPFailCounter()
 
     server = socketserver.ThreadingTCPServer((host, port), TCPHandler)
     try:
