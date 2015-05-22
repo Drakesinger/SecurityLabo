@@ -42,7 +42,7 @@ def main():
     s.send(Global.getMessage(1, user).encode(encoding="UTF-8"))
     print("sent")
     data = s.recv(Global.BUFFER_SIZE)
-    print("recieved")
+    print("received")
     message = data.decode(encoding="UTF-8")
     if message[0] == "2":
         code = getString("chap", Global.REGEX_CHALLENGE)
@@ -50,8 +50,18 @@ def main():
         print("before resend")
         s.send(Global.getMessage(4, code).encode(encoding="UTF-8"))
         print("after resend")
+        data = s.recv(Global.BUFFER_SIZE)
+        message = data.decode(encoding="UTF-8")
+        print("received data:", message)
+        if message[0] == "5":
+            print("User ok!")
+        else:
+            print("Bad chap !")
+    else:
+        print("Error, user unknown !")
+
+
     s.close()
-    print("received data:", data.decode(encoding="UTF-8"))
 
 if __name__ == '__main__':
     main()

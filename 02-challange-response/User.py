@@ -9,8 +9,8 @@ class User():
         return True
 
     def getChallenge(self):
-        self.__challenge = "abcdef"
+        self.__challenge = "abcdefgh"
         return self.__challenge
 
     def isChallengeValid(self, value):
-        return True
+        return self.__challenge == value
