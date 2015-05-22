@@ -4,6 +4,7 @@ import string
 from random import choice
 import os
 import datetime
+import Global
 
 KEY_LENGHT = 5
 CHALLENGE_LENGHT = 8
@@ -17,7 +18,7 @@ def generateChallenge(username, output_folder="users", entries=10, expiration_da
     if expiration_date is None:
         expiration_date = datetime.datetime.now() + datetime.timedelta(days=EXPIRATION_DAYS)
     alphabet = string.ascii_letters
-    separator = "\t"
+
 
     keys = [generateKeyword(alphabet, KEY_LENGHT) for k in range(entries)]
     challenges = [generateKeyword(alphabet, CHALLENGE_LENGHT) for k in range(entries)]
@@ -31,7 +32,7 @@ def generateChallenge(username, output_folder="users", entries=10, expiration_da
         file.write("\n")
 
         for (key, challenge) in zip(keys, challenges):
-            (file.write(key + separator + challenge + "\n"))
+            file.write(key + Global.USER_FILE_DELIMITER + challenge + "\n")
 
 if __name__ == '__main__':
     for i in range(5):

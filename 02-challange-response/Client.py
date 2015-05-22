@@ -45,6 +45,7 @@ def main():
     print("received")
     message = data.decode(encoding="UTF-8")
     if message[0] == "2":
+        print("chap = '%s'" % message[2:])
         code = getString("chap", Global.REGEX_CHALLENGE)
 
         print("before resend")
