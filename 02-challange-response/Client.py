@@ -25,6 +25,13 @@ def getInt(name):
             print("Invalid %s, please retry !" % name)
     return value
 
+def getMessage(s):
+    data = s.recv(Global.BUFFER_SIZE)
+    str = data.decode(encoding="UTF-8")
+    message = Global.Message(str)
+    #print("received '%s'" % str.rstrip())
+    return message
+
 def main():
     print()
     print()
@@ -40,27 +47,28 @@ def main():
     s.connect((host, port))
     print("connected")
     s.send(Global.getMessage(1, user).encode(encoding="UTF-8"))
-    print("sent")
-    data = s.recv(Global.BUFFER_SIZE)
-    print("received")
-    message = data.decode(encoding="UTF-8")
-    if message[0] == "2":
-        print("chap = '%s'" % message[2:])
-        code = getString("chap", Global.REGEX_CHALLENGE)
-
-        print("before resend")
-        s.send(Global.getMessage(4, code).encode(encoding="UTF-8"))
-        print("after resend")
-        data = s.recv(Global.BUFFER_SIZE)
-        message = data.decode(encoding="UTF-8")
-        print("received data:", message)
-        if message[0] == "5":
-            print("User ok!")
+    message = getMessage(s)
+    if len(message.getRaw()) == 0:
+        print("Server has disconnect")
+    elif message.isValid():
+        if message.getCode() == 2:
+            print("chap = '%s'" % message.getContent())
+            code = getString("chap", Global.REGEX_CHALLENGE)
+            s.send(Global.getMessage(4, code).encode(encoding="UTF-8"))
+            message = getMessage(s)
+            if len(message.getRaw()) == 0:
+                print("Server has disconnect")
+            elif message.isValid():
+                if message.getCode() == 5:
+                    print("User ok!")
+                else:
+                    print("Bad chap !")
+            else:
+                print("Error, user unknown !")
         else:
-            print("Bad chap !")
+            print("Error, user unknown !")
     else:
-        print("Error, user unknown !")
-
+        print("Response not valid !")
 
     s.close()
 

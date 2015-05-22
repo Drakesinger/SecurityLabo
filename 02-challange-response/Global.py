@@ -24,11 +24,12 @@ class Message:
         self.__valid = False
         self.__code = 0
         self.__content = ""
+        self.__raw = str.rstrip()
         try:
             self.__code = int(str[0])
             if not str[1] == MESSAGE_SEPARATOR:
                 return
-            self.__content = str[2:].rstrip()
+            self.__content = self.__raw[2:]
             self.__valid = True
         except:
             return
@@ -42,6 +43,8 @@ class Message:
         return self.__code
     def isValid(self):
         return self.__valid
+    def getRaw(self):
+        return self.__raw
 
 #for test only
 user1 = {
