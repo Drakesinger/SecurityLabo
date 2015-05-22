@@ -13,6 +13,7 @@ def getString(name, regex):
             value = None
             print("Invalide %s, please retry !" % name)
     return value
+
 def getInt(name):
     value = None
     while(not value):
@@ -38,10 +39,17 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
     print("connected")
-    s.send(("1 " + user+"\r\n").encode(encoding="UTF-8"))
+    s.send(Global.getMessage(1, user).encode(encoding="UTF-8"))
     print("sent")
-    data = s.recv(1024)
+    data = s.recv(Global.BUFFER_SIZE)
     print("recieved")
+    message = data.decode(encoding="UTF-8")
+    if message[0] == "2":
+        code = getString("chap", Global.REGEX_CHALLENGE)
+
+        print("before resend")
+        s.send(Global.getMessage(4, code).encode(encoding="UTF-8"))
+        print("after resend")
     s.close()
     print("received data:", data.decode(encoding="UTF-8"))
 
