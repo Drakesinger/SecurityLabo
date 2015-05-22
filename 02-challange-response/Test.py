@@ -34,6 +34,18 @@ class TestChallengeServer(unittest.TestCase):
         self.assertEqual(msg[0], "2")
         msg, keep = srv.receive(Global.getMessage(4, Global.user1[msg[2:].rstrip()]))
         print("test_3.2 %s %s" % (msg.rstrip(), keep))
+    def test_4(self):
+        ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
+        srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
+        msg, keep = srv.receive("a aasf\n")
+        self.assertFalse(keep)
+        self.assertIsNone(msg)
+    def test_5(self):
+        ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
+        srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
+        msg, keep = srv.receive("1aaasf\n")
+        self.assertFalse(keep)
+        self.assertIsNone(msg)
 
 class TestIPFailCounter(unittest.TestCase):
     def test_1(self):

@@ -27,27 +27,22 @@ class ChallengeServer:
         return message, False
     def receive(self, msg):
         print("recive '%s' state %s" % (msg.rstrip(), self.__state))
-        try:
-            code = int(msg[0])
-        except:
+        message = Global.Message(msg)
+        if not message.isValid():
             return self.error(self.errorBadFormat)
-        if not msg[1] == Global.MESSAGE_SEPARATOR:
-            return self.error(self.errorBadFormat)
-        value = msg[2:].rstrip()
-
-        if code == 1 and self.__state == State.StateWaitUser:
-            if not re.match(Global.REGEX_USER, value):
+        if message.getCode() == 1 and self.__state == State.StateWaitUser:
+            if not re.match(Global.REGEX_USER, message.getContent()):
                 return self.error(self.errorUser)
-            self.__user = User.User(value)
+            self.__user = User.User(message.getContent())
             if self.__user.isUserValid():
                 self.__state = State.StateWaitChallenge
                 return Global.getMessage(2, self.__user.getChallenge()), True
             else:
                 return self.error(self.errorUser)
-        elif code == 4 and self.__state == State.StateWaitChallenge:
-            if not re.match(Global.REGEX_USER, value):
+        elif message.getCode() == 4 and self.__state == State.StateWaitChallenge:
+            if not re.match(Global.REGEX_USER, message.getContent()):
                 return self.error(self.errorChallenge)
-            if self.__user.isChallengeValid(value):
+            if self.__user.isChallengeValid(message.getContent()):
                 self.__state = State.StateConnected
                 return Global.getMessage(5, "Challenge ok"), True
             else:

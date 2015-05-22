@@ -19,6 +19,30 @@ MESSAGE_SEPARATOR = " "
 def getMessage(code, value):
     return "%d%s%s%s" % (code, MESSAGE_SEPARATOR, value, END_LINE)
 
+class Message:
+    def __init__(self, str):
+        self.__valid = False
+        self.__code = 0
+        self.__content = ""
+        try:
+            self.__code = int(str[0])
+            if not str[1] == MESSAGE_SEPARATOR:
+                return
+            self.__content = str[2:].rstrip()
+            self.__valid = True
+        except:
+            return
+    def getContent(self):
+        if not self.isValid():
+            raise Exception("Message not valid !")
+        return self.__content
+    def getCode(self):
+        if not self.isValid():
+            raise Exception("Message not valid !")
+        return self.__code
+    def isValid(self):
+        return self.__valid
+
 #for test only
 user1 = {
     "RKhcK": "DztGhRcp",
