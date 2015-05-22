@@ -41,14 +41,14 @@ class StateWaitUser(StateInterface):
     def acceptCode(self, code):
         return code == "1"
     def error(self):
-        return "3 user KO"
+        return Global.getMessage(3, "user KO")
     def getResponse(self, message):
         if not re.match(Global.REGEX_USER, message):
             return self.error()
         self.__user = User.User(message)
         if self.__user.isUserValid():
             self.keepOpen = True
-            return "2 " + self.__user.getChallenge()
+            return Global.getMessage(2, self.__user.getChallenge())
         else:
             return self.error()
 
@@ -66,13 +66,13 @@ class StateWaitChallenge(StateInterface):
     def acceptCode(self, code):
         return code == "4"
     def error(self):
-        return "6 challenge KO"
+        return Global.getMessage(6, "challenge KO")
     def getResponse(self, message):
         if not re.match(Global.REGEX_CHALLENGE, message):
             return self.error()
         if self.__user.isChallengeValid(message):
             self.keepOpen = True
-            return "5 challengeOK"
+            return Global.getMessage(5, "Challenge ok")
         else:
             return self.error()
 
