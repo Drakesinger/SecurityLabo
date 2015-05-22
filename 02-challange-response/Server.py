@@ -20,7 +20,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         try:
             while(keepOpen):
                 # read data
-                data = self.request.recv(1024 * 4)
+                data = self.request.recv(Global.BUFFER_SIZE)
                 line += data.decode(encoding="UTF-8")
                 if self.END_LINE in line:
                     lines = line.split(self.END_LINE)
