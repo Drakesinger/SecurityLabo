@@ -5,6 +5,8 @@ import socketserver
 import ChallengeServer
 import Global
 
+ipFailCounter = None
+
 class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer): pass
 
 class TCPHandler(socketserver.BaseRequestHandler):
@@ -14,6 +16,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
         self.request.sendall(response)
     def handle(self):
         print("%s connected" % (self.client_address[0]))
+        if ipFailCounter.isBlocked()
         challengeServer = ChallengeServer.ChallengeServer()
         line = ""
         keepOpen = True
@@ -41,6 +44,10 @@ def main():
     port = 7777
     print("Start server on %s:%d" % (host, port))
     print("Press Ctrl+C to exit server")
+    import IPFailCounter
+    global ipFailCounter
+    ChallengeServer.ipFailCounter = ipFailCounter = IPFailCounter.IPFailCounter()
+
     server = socketserver.ThreadingTCPServer((host, port), TCPHandler)
     try:
         server.serve_forever()

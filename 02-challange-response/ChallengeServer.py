@@ -4,6 +4,8 @@ import re
 import User
 import Global
 
+ipFailCounter = None
+
 class ChallengeServer:
     def __init__(self):
         self.__state = StateWaitUser()
