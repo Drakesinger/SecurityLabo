@@ -1,7 +1,8 @@
 #-*- coding: utf-8 -*-
 
 #chap test file
-user1 = {
+testUserName = "test"
+testUserChallenges = {
     "RKhcK": "DztGhRcp",
     "oBTqK": "EcIQgNKQ",
     "zZTDl": "iiDirjEj",
@@ -14,44 +15,47 @@ user1 = {
     "IGDMC": "DNHeIYAU",
 }
 
-
 import unittest
 import ChallengeServer
 import IPFailCounter
 import Global
 from User import User
 
+def writeUserToFile():
+    from ChallengeGenerator import generateChallenge
+    generateChallenge(testUserName, 0, User.dir)
+    with open("%s/%s.txt" % (User.dir, testUserName), "a") as f:
+        for i in range(2):
+            for k in testUserChallenges:
+                f.write("%s%s%s\n" % (k, Global.USER_FILE_DELIMITER, testUserChallenges[k]))
+
+writeUserToFile()
 
 class TestChallengeServer(unittest.TestCase):
     def test_1(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
         msg, keep = srv.receive(Global.getMessage(1, "user"))
-        print("test_1.1 %s %s" % (msg.rstrip(), keep))
         self.assertFalse(keep)
         self.assertEqual(msg[0], "3")
 
     def test_2(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
-        msg, keep = srv.receive(Global.getMessage(1, "user1"))
-        print("test_2.1 %s %s" % (msg.rstrip(), keep))
+        msg, keep = srv.receive(Global.getMessage(1, testUserName))
         self.assertTrue(keep)
         self.assertEqual(msg[0], "2")
         msg, keep = srv.receive(Global.getMessage(4, "abcdefgh"))
-        print("test_2.2 %s %s" % (msg.rstrip(), keep))
         self.assertFalse(keep)
         self.assertEqual(msg[0], "6")
 
     def test_3(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
-        msg, keep = srv.receive(Global.getMessage(1, "user1"))
-        print("test_3.1 '%s' %s" % (msg.rstrip(), keep))
+        msg, keep = srv.receive(Global.getMessage(1, testUserName))
         self.assertTrue(keep)
         self.assertEqual(msg[0], "2")
-        msg, keep = srv.receive(Global.getMessage(4, user1[msg[2:].rstrip()]))
-        print("test_3.2 %s %s" % (msg.rstrip(), keep))
+        msg, keep = srv.receive(Global.getMessage(4, testUserChallenges[msg[2:].rstrip()]))
     def test_4(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
@@ -83,7 +87,7 @@ class TestIPFailCounter(unittest.TestCase):
 
 class TestUser(unittest.TestCase):
     def test_1(self):
-        u = User("user1")
+        u = User(testUserName)
         self.assertTrue(u.isUserValid())
     def test_2(self):
         u = User("useR1")
@@ -92,9 +96,11 @@ class TestUser(unittest.TestCase):
         u = User("useR")
         self.assertFalse(u.isUserValid())
     def test_4(self):
-        u = User("user1")
+        u = User(testUserName)
         self.assertTrue(u.isUserValid())
-        self.assertTrue(u.isChallengeValid(user1[u.getChallenge()]))
+        self.assertTrue(u.isChallengeValid(testUserChallenges[u.getChallenge()]))
+
+
 
 if __name__ == '__main__':
     unittest.main()
