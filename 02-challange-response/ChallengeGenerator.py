@@ -4,21 +4,18 @@
 import string
 from random import choice
 import os
-import datetime
+from _datetime import datetime, timedelta
 import Global
-
-DEFALUT_NUMBER = Global.DEFALUT_KEY_NUMBER
-
 
 # TODO: It might be interesting to keep the trace of all key/value pair to avoid generating an existing key/value pair
 
-def generateKeyword(alphabet, lenght):
-    return "".join(choice(alphabet) for _ in range(lenght))
+def generateKeyword(alphabet, length):
+    return "".join(choice(alphabet) for _ in range(length))
 
-def generateChallenge(username, entries=DEFALUT_NUMBER, output_folder="users", expiration_date=None):
+def generateChallenge(username, entries=Global.DEFAULT_KEY_NUMBER, output_folder="users", expiration_date=None):
 
     if expiration_date is None:
-        expiration_date = datetime.datetime.now() + datetime.timedelta(days=Global.EXPIRATION_DAYS)
+        expiration_date = datetime.now() + timedelta(days=Global.EXPIRATION_DAYS)
     alphabet = string.ascii_letters
 
 
@@ -29,7 +26,7 @@ def generateChallenge(username, entries=DEFALUT_NUMBER, output_folder="users", e
         os.makedirs(output_folder)
 
     with open(output_folder+"/" + username + ".txt", encoding="UTF-8", mode="w") as file:
-        file.write(expiration_date.strftime("%c") + "\n")
+        file.write(expiration_date.strftime(Global.DATE_FORMAT) + "\n")
 
         file.write("\n")
 
@@ -48,7 +45,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("user", help="username", type=validateRegexp(Global.REGEX_USER))
-    parser.add_argument("-n", "--number", help="number of challenge", type=int, default=DEFALUT_NUMBER)
+    parser.add_argument("-n", "--number", help="number of challenge", type=int, default=Global.DEFAULT_KEY_NUMBER)
     args = parser.parse_args()
 
     generateChallenge(args.user, args.number)
