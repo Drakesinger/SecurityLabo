@@ -46,16 +46,3 @@ class Message:
     def getRaw(self):
         return self.__raw
 
-#for test only
-user1 = {
-    "RKhcK": "DztGhRcp",
-    "oBTqK": "EcIQgNKQ",
-    "zZTDl": "iiDirjEj",
-    "nTTbg": "uwdiFNBl",
-    "MkvYj": "OlBgChSu",
-    "ZwuwP": "BazNVEby",
-    "mecTP": "lsRiNgAE",
-    "kfnTq": "bDfDWuTb",
-    "ckRyA": "NSfoYOdD",
-    "IGDMC": "DNHeIYAU",
-}

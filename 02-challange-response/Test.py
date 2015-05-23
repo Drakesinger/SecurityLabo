@@ -1,8 +1,26 @@
+#-*- coding: utf-8 -*-
+
+#chap test file
+user1 = {
+    "RKhcK": "DztGhRcp",
+    "oBTqK": "EcIQgNKQ",
+    "zZTDl": "iiDirjEj",
+    "nTTbg": "uwdiFNBl",
+    "MkvYj": "OlBgChSu",
+    "ZwuwP": "BazNVEby",
+    "mecTP": "lsRiNgAE",
+    "kfnTq": "bDfDWuTb",
+    "ckRyA": "NSfoYOdD",
+    "IGDMC": "DNHeIYAU",
+}
+
+
 import unittest
 import ChallengeServer
 import IPFailCounter
 import Global
 from User import User
+
 
 class TestChallengeServer(unittest.TestCase):
     def test_1(self):
@@ -32,7 +50,7 @@ class TestChallengeServer(unittest.TestCase):
         print("test_3.1 '%s' %s" % (msg.rstrip(), keep))
         self.assertTrue(keep)
         self.assertEqual(msg[0], "2")
-        msg, keep = srv.receive(Global.getMessage(4, Global.user1[msg[2:].rstrip()]))
+        msg, keep = srv.receive(Global.getMessage(4, user1[msg[2:].rstrip()]))
         print("test_3.2 %s %s" % (msg.rstrip(), keep))
     def test_4(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
@@ -76,7 +94,7 @@ class TestUser(unittest.TestCase):
     def test_4(self):
         u = User("user1")
         self.assertTrue(u.isUserValid())
-        self.assertTrue(u.isChallengeValid(Global.user1[u.getChallenge()]))
+        self.assertTrue(u.isChallengeValid(user1[u.getChallenge()]))
 
 if __name__ == '__main__':
     unittest.main()
