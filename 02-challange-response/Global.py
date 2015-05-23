@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 
-REGEX_USER = "^[A-Za-z0-9]{4,}$"
-REGEX_CHALLENGE = "^[A-Za-z]{8}$"
+KEY_LENGHT = 5
+CHALLENGE_LENGHT = 8
+USER_MIN_LENGHT = 4
+
+EXPIRATION_DAYS = 30
+DEFALUT_KEY_NUMBER = 10
+
+REGEX_USER = "^[A-Za-z0-9]{%d,}$" % USER_MIN_LENGHT
+REGEX_CHALLENGE = "^[A-Za-z]{%d}$" % CHALLENGE_LENGHT
 
 REGEX_HOST = "^[A-Za-z0-9.]{2,}$"
 
