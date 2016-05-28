@@ -7,6 +7,7 @@ def asUnique(s):
             r += c
     return r
 
+
 class genletter:
     def __init__(self, lettres):
         self.__lettres = lettres
@@ -24,24 +25,19 @@ class genletter:
 
 
 def mygen(lettres, n):
-    tab = [genletter(lettres) for i in range(n)]
-    tabInv = reversed(tab)
-    tabInv = tab
-    hasNext = True
-    while hasNext:
-        yield "".join([g.current() for g in tabInv])[::-1]
-        hasNext = False
-        for g in tab:
-            if g.hasNext():
-                g.next()
-                hasNext = True
-                break
-            else:
-                g.reset()
+    import itertools
+
+    res = itertools.product(lettres,repeat=n)
+    for combo in res:
+        yield "".join(combo)
+
+
 def crypte(str, methode):
     m =  hashlib.new(methode)
     m.update(str.encode('utf-8'))
     return m.hexdigest()
+
+
 methodes = hashlib.algorithms_guaranteed
 
 def main():
@@ -56,13 +52,17 @@ def main():
     parser.add_argument("-m", help="methode", choices=methodes)
     parser.add_argument("-o","--out" ,  help="file output, if not set, print int console")
     args = parser.parse_args()
+
     if (args.min > args.max):
         print("Error, min bigger than max !")
         parser.print_help()
         return
+
     print(args)
+
     import string
     import sys
+
     lettres = ""
     if args.a:
         lettres += string.ascii_lowercase
@@ -76,13 +76,14 @@ def main():
         out = open(args.out, "w", encoding="UTF-8")
     else:
         out = sys.stdout
+
     lettres = asUnique(lettres)
     if (len(lettres) <= 0):
         print("Error, no letters !")
         parser.print_help()
         return
-    print("generating %s [%d, %d] with %s" % (args.m, args.min, args.max, lettres))
 
+    print("generating %s [%d, %d] with %s" % (args.m, args.min, args.max, lettres))
 
     for i in range(args.min,args.max + 1):
         for mot in mygen(lettres, i):
@@ -90,6 +91,7 @@ def main():
                 out.write("%s = %s\n" % (mot, crypte(mot, args.m)))
             else:
                 out.write("%s\n" % mot)
+
 
 if __name__ == '__main__':
     main()
