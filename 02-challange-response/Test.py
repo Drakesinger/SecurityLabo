@@ -1,6 +1,6 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-#chap test file
+# chap test file
 testUserName = "test"
 testUserChallenges = {
     "RKhcK": "DztGhRcp",
@@ -21,6 +21,7 @@ import IPFailCounter
 import Global
 from User import User
 
+
 def writeUserToFile():
     from ChallengeGenerator import generateChallenge
     generateChallenge(testUserName, 0, User.dir)
@@ -29,7 +30,9 @@ def writeUserToFile():
             for k in testUserChallenges:
                 f.write("%s%s%s\n" % (k, Global.USER_FILE_DELIMITER, testUserChallenges[k]))
 
+
 writeUserToFile()
+
 
 class TestChallengeServer(unittest.TestCase):
     def test_1(self):
@@ -56,18 +59,21 @@ class TestChallengeServer(unittest.TestCase):
         self.assertTrue(keep)
         self.assertEqual(msg[0], "2")
         msg, keep = srv.receive(Global.getMessage(4, testUserChallenges[msg[2:].rstrip()]))
+
     def test_4(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
         msg, keep = srv.receive("a aasf\n")
         self.assertFalse(keep)
         self.assertIsNone(msg)
+
     def test_5(self):
         ipFailCounter = IPFailCounter.IPFailCounter(Global.MAX_TRY_BY_IP)
         srv = ChallengeServer.ChallengeServer("1.1.1.1", ipFailCounter)
         msg, keep = srv.receive("1aaasf\n")
         self.assertFalse(keep)
         self.assertIsNone(msg)
+
 
 class TestIPFailCounter(unittest.TestCase):
     def test_1(self):
@@ -85,21 +91,24 @@ class TestIPFailCounter(unittest.TestCase):
             self.assertFalse(ipFailCounter.isBlocked(ip))
             ipFailCounter.success(ip)
 
+
 class TestUser(unittest.TestCase):
     def test_1(self):
         u = User(testUserName)
         self.assertTrue(u.isUserValid())
+
     def test_2(self):
         u = User("useR1")
         self.assertTrue(u.isUserValid())
+
     def test_3(self):
         u = User("useR")
         self.assertFalse(u.isUserValid())
+
     def test_4(self):
         u = User(testUserName)
         self.assertTrue(u.isUserValid())
         self.assertTrue(u.isChallengeValid(testUserChallenges[u.getChallenge()]))
-
 
 
 if __name__ == '__main__':
