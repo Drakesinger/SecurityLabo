@@ -14,10 +14,10 @@ class State(enum.Enum):
 
 
 class ChallengeServer:
-    errorUser = Global.getMessage(3, "user KO")
+    errorUser = Global.get_message(3, "user KO")
     errorBadFormat = None
     errorBadProtocol = None
-    errorChallenge = Global.getMessage(6, "challenge KO")
+    errorChallenge = Global.get_message(6, "challenge KO")
 
     def __init__(self, clientIp, ipFailCounter):
         self.__clientIp = clientIp
@@ -35,34 +35,34 @@ class ChallengeServer:
         message = Global.Message(msg)
 
         # Check validity of the message.
-        if not message.isValid():
+        if not message.is_valid():
             print("Invalid message received.")
             return self.error(self.errorBadFormat)
 
-        if message.getCode() == 1 and self.__state == State.StateWaitUser:
+        if message.get_code() == 1 and self.__state == State.StateWaitUser:
 
-            if not re.match(Global.REGEX_USER, message.getContent()):
+            if not re.match(Global.REGEX_USER, message.get_content()):
                 print("Error991")
                 return self.error(self.errorUser)
 
-            self.__user = User.User(message.getContent())
+            self.__user = User.User(message.get_content())
 
-            if self.__user.isUserValid():
+            if self.__user.is_user_valid():
                 self.__state = State.StateWaitChallenge
-                return Global.getMessage(2, self.__user.getChallenge()), True
+                return Global.get_message(2, self.__user.get_challenge()), True
             else:
                 print("Error992")
                 return self.error(self.errorUser)
 
-        elif message.getCode() == 4 and self.__state == State.StateWaitChallenge:
+        elif message.get_code() == 4 and self.__state == State.StateWaitChallenge:
 
-            if not re.match(Global.REGEX_CHALLENGE, message.getContent()):
+            if not re.match(Global.REGEX_CHALLENGE, message.get_content()):
                 print("Error993")
                 return self.error(self.errorChallenge)
 
-            if self.__user.isChallengeValid(message.getContent()):
+            if self.__user.is_challenge_valid(message.get_content()):
                 self.__state = State.StateConnected
-                return Global.getMessage(5, "Challenge ok"), True
+                return Global.get_message(5, "Challenge ok"), True
             else:
                 print("Error994")
                 return self.error(self.errorChallenge)

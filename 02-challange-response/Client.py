@@ -6,7 +6,7 @@ import Global
 import socket
 
 
-def getString(name, regex):
+def get_string(name, regex):
     value = None
     while (not value):
         value = input("Enter %s : " % name)
@@ -22,9 +22,9 @@ def getString(name, regex):
     return value
 
 
-def getInt(name):
+def get_int(name):
     value = None
-    while (not value):
+    while not value:
         value = input("Enter %s : " % name)
         try:
             value = int(value)
@@ -34,7 +34,7 @@ def getInt(name):
     return value
 
 
-def getMessage(sock):
+def get_message(sock):
     data = sock.recv(Global.BUFFER_SIZE)
     str = data.decode(encoding="UTF-8")
     message = Global.Message(str)
@@ -48,9 +48,9 @@ def main():
     print("Challenge client")
     print("================")
     print()
-    host = "157.26.109.83" #getString("host", Global.REGEX_HOST)
-    port = 7777 # getInt("port")
-    user = getString("user", Global.REGEX_USER)
+    host = get_string("host", Global.REGEX_HOST)
+    port = get_int("port")
+    user = get_string("user", Global.REGEX_USER)
     print("Connect to %s@%s:%d" % (user, host, port))
 
     sock = socket.create_connection((host, port))
@@ -60,28 +60,34 @@ def main():
     else:
         return
 
-    sock.send(Global.getMessage(1, user).encode(encoding="UTF-8"))
-    message = getMessage(sock)
-    if len(message.getRaw()) == 0:
+    sock.send(Global.get_message(1, user).encode(encoding="UTF-8"))
+
+    message = get_message(sock)
+    if len(message.get_raw_data()) == 0:
         print("Server has disconnected.")
-    elif message.isValid():
-        print("Message received: ",message.getContent())
-        if message.getCode() == 2:
-            print("chap = '%s'" % message.getContent())
-            code = getString("chap", Global.REGEX_CHALLENGE)
-            sock.send(Global.getMessage(4, code).encode(encoding="UTF-8"))
-            message = getMessage(sock)
-            if len(message.getRaw()) == 0:
+    elif message.is_valid():
+        print("Message received: ",message.get_content())
+
+        if message.get_code() == 2:
+            print("chap = '%s'" % message.get_content())
+
+            code = get_string("chap", Global.REGEX_CHALLENGE)
+            sock.send(Global.get_message(4, code).encode(encoding="UTF-8"))
+
+            message = get_message(sock)
+            if len(message.get_raw_data()) == 0:
                 print("Server has disconnected.")
-            elif message.isValid():
-                if message.getCode() == 5:
+            elif message.is_valid():
+                if message.get_code() == 5:
                     print("User ok!")
                 else:
                     print("Bad chap !")
             else:
                 print("Error, user unknown !")
+
         else:
             print("Error, user unknown !")
+
     else:
         print("Response not valid !")
 

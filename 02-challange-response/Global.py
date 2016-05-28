@@ -9,7 +9,7 @@ DEFAULT_KEY_NUMBER = 10
 DATE_FORMAT = "%d.%m.%Y %H:%M:%S"
 
 REGEX_USER = "^[A-Za-z0-9]{%d,}$" % USER_MIN_LENGHT
-REGEX_CHALLENGE = "^[A-Za-z]{%d}$" % CHALLENGE_LENGTH
+REGEX_CHALLENGE = "^[A-Za-z]{%d,}$" % CHALLENGE_LENGTH
 
 REGEX_HOST = "^[A-Za-z0-9.]{2,}$"
 
@@ -26,7 +26,7 @@ MAX_TRY_BY_IP = 3
 MESSAGE_SEPARATOR = " "
 
 
-def getMessage(code, value):
+def get_message(code, value):
     return "%d%s%s%s" % (code, MESSAGE_SEPARATOR, value, END_LINE)
 
 
@@ -45,18 +45,18 @@ class Message:
         except:
             return
 
-    def getContent(self):
-        if not self.isValid():
+    def get_content(self):
+        if not self.is_valid():
             raise Exception("Message not valid !")
         return self.__content
 
-    def getCode(self):
-        if not self.isValid():
+    def get_code(self):
+        if not self.is_valid():
             raise Exception("Message not valid !")
         return self.__code
 
-    def isValid(self):
+    def is_valid(self):
         return self.__valid
 
-    def getRaw(self):
+    def get_raw_data(self):
         return self.__raw

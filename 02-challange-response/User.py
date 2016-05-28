@@ -9,6 +9,15 @@ import Global
 
 
 class User:
+    """
+    Class representing a User that needs to responde to a challenge.
+    The user's challenges and responses are defined in the users folder by
+    a file [user_name].txt containing rows of:
+    [challenge]\t[response]
+
+    The challenge must be of a length of 4 characters minimum and contains only letters.
+    The response must be of a length of 8 characters minimum and contains only letters.
+    """
     dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "users")
     print("Dir", dir)
 
@@ -19,59 +28,68 @@ class User:
         self.__valid = False
 
         file = os.path.join(self.dir, "%s.txt" % user)
-        fileLock = "%s.lock" % file
-        fileTmp = "%s.old" % file
+        file_locked = "%s.lock" % file
+        file_tmp = "%s.old" % file
 
         if os.path.exists(file):
 
-            # wait while lock file exist
-            while os.path.exists(fileLock):
+            # Wait while locked file exists.
+            while os.path.exists(file_locked):
                 time.sleep(0.01)
 
-            # touch lock file
-            with open(fileLock, 'w') as f:
+            # Touch locked file.
+            with open(file_locked, 'w') as f:
                 f.write("")
 
-            # copy file to tmp
-            shutil.copyfile(file, fileTmp)
+            # Copy the file to a temporary file.
+            shutil.copyfile(file, file_tmp)
 
-            userValid = False
-            dateValid = False
+            # All data is invalid at the start.
+            user_valid = False
+            date_valid = False
 
-            # open both files (copy every line on tmp to normal file)
-            with open(fileTmp, "r") as fRead, open(file, "w") as fWrite:
-                # enumerate for the no of line
-                for i, line in enumerate(fRead):
-                    if i == Global.USER_FILE_EXPIRATION_DATE_LINE:
-                        dateValid = datetime.now() < datetime.strptime(line.rstrip(), Global.DATE_FORMAT)
-                        print("dateValid", dateValid)
-                    # we use the first chap of line
-                    if i == Global.USER_FILE_FIRST_CHAP_LINE:
-                        # split
+            # Open both files and copy every line int tmp to the normal file.
+            with open(file_tmp, "r") as fRead, open(file, "w") as fWrite:
+                # Get the number of lines within the file and the line itself.
+                for index_line, line in enumerate(fRead):
+
+                    # Check if the file is not expired.
+                    if index_line == Global.USER_FILE_EXPIRATION_DATE_LINE:
+                        date_valid = datetime.now() < datetime.strptime(line.rstrip(), Global.DATE_FORMAT)
+                        print("Valid Date:", date_valid)
+
+                    # We use the first line where we have a chap.
+                    if index_line == Global.USER_FILE_FIRST_CHAP_LINE:
+                        # Split the line.
                         tab = line.split(Global.USER_FILE_DELIMITER)
 
-                        # if valid line
+                        # Check if the line is valid.
                         if len(tab) == 2:
-                            # get information
-                            userValid = True
+                            # Get the challenge and response.
+                            user_valid = True
                             self.__challenge = tab[0]
                             self.__response = tab[1].rstrip()
 
-                            print("Challege|Response:",self.__challenge,self.__response)
-                    else:  # if not first chap, write line to dest
+                            # Since we don't compute anything, the expected response
+                            # is displayed server-side.
+                            print("Challege | Response:",self.__challenge,self.__response)
+
+                    else:
                         fWrite.write(line)
 
-            self.__valid = dateValid and userValid
-            # remove tmp file
-            os.remove(fileTmp)
-            # remove lock file
-            os.remove(fileLock)
+            self.__valid = date_valid and user_valid
 
-    def isUserValid(self):
+            # Remove tmp file.
+            os.remove(file_tmp)
+
+            # Remove locked file.
+            os.remove(file_locked)
+
+    def is_user_valid(self):
         return self.__valid
 
-    def getChallenge(self):
+    def get_challenge(self):
         return self.__challenge
 
-    def isChallengeValid(self, value):
-        return self.__response == value and self.isUserValid()
+    def is_challenge_valid(self, value):
+        return self.__response == value and self.is_user_valid()

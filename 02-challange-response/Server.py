@@ -21,7 +21,7 @@ class TCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         ip = self.client_address[0]
         print("%s connected" % (ip))
-        if self.ipFailCounter.isBlocked(ip):
+        if self.ipFailCounter.is_blocked(ip):
             return
         challengeServer = ChallengeServer.ChallengeServer(ip, self.ipFailCounter)
         line = ""
@@ -56,7 +56,7 @@ def main():
     except KeyboardInterrupt:
         print("Shutdown server")
         server.shutdown()
-
+        exit()
 
 if __name__ == '__main__':
     main()
