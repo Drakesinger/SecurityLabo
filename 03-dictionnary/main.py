@@ -1,6 +1,6 @@
 import hashlib
 
-def asUnique(s):
+def keep_unique_characters(s):
     r = ""
     for c in s:
         if not c in r:
@@ -8,37 +8,21 @@ def asUnique(s):
     return r
 
 
-class genletter:
-    def __init__(self, lettres):
-        self.__lettres = lettres
-        self.__i = 0
-        self.__len = len(lettres) -1
-    def hasNext(self):
-        return self.__i < self.__len
-    def next(self):
-        self.__i += 1
-        return self.current
-    def current(self):
-        return self.__lettres[self.__i]
-    def reset(self):
-        self.__i = 0
-
-
-def mygen(lettres, n):
+def generate_combinations(alphabet, n):
     import itertools
 
-    res = itertools.product(lettres,repeat=n)
+    res = itertools.product(alphabet,repeat=n)
     for combo in res:
         yield "".join(combo)
 
 
-def crypte(str, methode):
-    m =  hashlib.new(methode)
+def encrypt(str, encryption):
+    m =  hashlib.new(encryption)
     m.update(str.encode('utf-8'))
     return m.hexdigest()
 
 
-methodes = hashlib.algorithms_guaranteed
+encryptions = hashlib.algorithms_guaranteed
 
 def main():
     import argparse
@@ -49,7 +33,7 @@ def main():
     parser.add_argument("-A", help="include A-Z", action="store_true")
     parser.add_argument("-n", help="include 0-9", action="store_true")
     parser.add_argument("-s", help="Specials chars")
-    parser.add_argument("-m", help="methode", choices=methodes)
+    parser.add_argument("-m", help="encryption", choices=encryptions)
     parser.add_argument("-o","--out" ,  help="file output, if not set, print int console")
     args = parser.parse_args()
 
@@ -63,32 +47,32 @@ def main():
     import string
     import sys
 
-    lettres = ""
+    alphabet = ""
     if args.a:
-        lettres += string.ascii_lowercase
+        alphabet += string.ascii_lowercase
     if args.A:
-        lettres += string.ascii_uppercase
+        alphabet += string.ascii_uppercase
     if args.n:
-        lettres += string.digits
+        alphabet += string.digits
     if args.s:
-        lettres += args.s
+        alphabet += args.s
     if args.out:
         out = open(args.out, "w", encoding="UTF-8")
     else:
         out = sys.stdout
 
-    lettres = asUnique(lettres)
-    if (len(lettres) <= 0):
+    alphabet = keep_unique_characters(alphabet)
+    if (len(alphabet) <= 0):
         print("Error, no letters !")
         parser.print_help()
         return
 
-    print("generating %s [%d, %d] with %s" % (args.m, args.min, args.max, lettres))
+    print("generating %s [%d, %d] with %s" % (args.m, args.min, args.max, alphabet))
 
     for i in range(args.min,args.max + 1):
-        for mot in mygen(lettres, i):
+        for mot in generate_combinations(alphabet, i):
             if args.m:
-                out.write("%s = %s\n" % (mot, crypte(mot, args.m)))
+                out.write("%s = %s\n" % (mot, encrypt(mot, args.m)))
             else:
                 out.write("%s\n" % mot)
 
